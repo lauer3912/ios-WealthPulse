@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 
+@MainActor
 final class SettingsViewModel: ObservableObject {
     @Published var settings: AppSettings = AppSettings()
     @Published var subscription: Subscription?
@@ -14,7 +15,7 @@ final class SettingsViewModel: ObservableObject {
 
     private let dataService = DataService.shared
     private let themeService = ThemeService.shared
-    private let biometricService = BiometricService.shared
+    let biometricService = BiometricService.shared
 
     init() {
         loadData()

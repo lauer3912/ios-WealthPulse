@@ -43,7 +43,7 @@ final class SubscriptionService: ObservableObject {
         isLoading = false
     }
 
-    func purchase(_ product: Product) async throws -> Transaction? {
+    func purchase(_ product: Product) async throws -> StoreKit.Transaction? {
         isLoading = true
         errorMessage = nil
 
@@ -80,7 +80,7 @@ final class SubscriptionService: ObservableObject {
     func updateSubscriptionStatus() async {
         var purchased: Set<String> = []
 
-        for await result in Transaction.currentEntitlements {
+        for await result in StoreKit.Transaction.currentEntitlements {
             do {
                 let transaction = try checkVerified(result)
                 if transaction.productID == "wealthpulse_basic" ||
@@ -130,7 +130,7 @@ final class SubscriptionService: ObservableObject {
     func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         switch result {
         case .unverified:
-            throw StoreKitError.failedVerification
+            throw StoreKitError.verificationFailed
         case .verified(let safe):
             return safe
         }
@@ -138,7 +138,7 @@ final class SubscriptionService: ObservableObject {
 
     func listenForTransactions() -> Task<Void, Error> {
         return Task.detached {
-            for await result in Transaction.updates {
+            for await result in StoreKit.Transaction.updates {
                 do {
                     let transaction = try await self.checkVerified(result)
                     await self.updateSubscriptionStatus()
