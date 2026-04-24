@@ -129,8 +129,8 @@ final class SubscriptionService: ObservableObject {
 
     func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         switch result {
-        case .unverified:
-            throw StoreKitError.verificationFailed
+        case .unverified(let error):
+            throw error
         case .verified(let safe):
             return safe
         }
