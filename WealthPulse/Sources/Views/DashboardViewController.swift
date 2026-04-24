@@ -16,9 +16,9 @@ final class DashboardViewController: UIViewController {
     private let netWorthValueLabel = UILabel()
 
     private let statsStackView = UIStackView()
-    private let incomeCard = UIView()
-    private let expenseCard = UIView()
-    private let savingsCard = UIView()
+    private var incomeCard = UIView()
+    private var expenseCard = UIView()
+    private var savingsCard = UIView()
 
     private let recentTransactionsLabel = UILabel()
     private let seeAllButton = UIButton(type: .system)
@@ -149,16 +149,8 @@ final class DashboardViewController: UIViewController {
         statsStackView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(statsStackView)
 
-        incomeCard.backgroundColor = .cardBackground
-        incomeCard.layer.cornerRadius = 12
         incomeCard = createStatCard(title: "Income", value: "+\(viewModel.monthlyIncome.currencyFormatted)", color: .incomeGreen)
-
-        expenseCard.backgroundColor = .cardBackground
-        expenseCard.layer.cornerRadius = 12
         expenseCard = createStatCard(title: "Expenses", value: "-\(viewModel.monthlyExpenses.currencyFormatted)", color: .expenseRed)
-
-        savingsCard.backgroundColor = .cardBackground
-        savingsCard.layer.cornerRadius = 12
         savingsCard = createStatCard(title: "Savings", value: viewModel.monthlySavings.currencyFormatted, color: .primaryBlue)
 
         statsStackView.addArrangedSubview(incomeCard)
