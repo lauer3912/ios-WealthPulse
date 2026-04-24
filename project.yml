@@ -14,6 +14,11 @@ settings:
     CODE_SIGN_STYLE: Automatic
     ENABLE_USER_SCRIPT_SANDBOXING: NO
 
+packages:
+  SnapKit:
+    url: https://github.com/SnapKit/SnapKit
+    from: "5.6.0"
+
 targets:
   WealthPulse:
     type: application
@@ -28,8 +33,16 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_ENTITLEMENTS: WealthPulse/Sources/App/WealthPulse.entitlements
         GENERATE_INFOPLIST_FILE: NO
+    dependencies:
+      - package: SnapKit
     entitlements:
       path: WealthPulse/Sources/App/WealthPulse.entitlements
       properties:
         com.apple.developer.applesignin:
           - Default
+
+schemes:
+  WealthPulse:
+    build:
+      targets:
+        WealthPulse: all
