@@ -71,3 +71,16 @@ schemes:
         - WealthPulseUITests
     archive:
       config: Release
+
+  WealthPulseUITests:
+    build:
+      targets:
+        WealthPulseUITests: test
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - WealthPulseUITests
+    archive:
+      config: Release
