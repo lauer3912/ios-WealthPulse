@@ -37,9 +37,7 @@ targets:
       - package: SnapKit
     entitlements:
       path: WealthPulse/Sources/App/WealthPulse.entitlements
-      properties:
-        com.apple.developer.applesignin:
-          - Default
+      properties: {}
 
 schemes:
   WealthPulse:
