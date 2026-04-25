@@ -36,10 +36,6 @@ targets:
         GENERATE_INFOPLIST_FILE: NO
     dependencies:
       - package: SnapKit
-      - target: WealthPulseTests
-        embed: false
-      - target: WealthPulseUITests
-        embed: false
     entitlements:
       path: WealthPulse/Sources/App/WealthPulse.entitlements
       properties: {}
