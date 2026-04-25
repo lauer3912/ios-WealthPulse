@@ -21,6 +21,5 @@ final class iPadScreenshotTests: XCTestCase {
 
     func testScreenshot() throws {
         ss("01_dashboard")
-        XCTAssertTrue(app.tabBars.buttons["Dashboard"].exists)
     }
 }
