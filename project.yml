@@ -40,12 +40,34 @@ targets:
       path: WealthPulse/Sources/App/WealthPulse.entitlements
       properties: {}
 
+  WealthPulseUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: WealthPulseUITests
+    settings:
+      base:
+        INFOPLIST_FILE: WealthPulseUITests/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.ggsheng.WealthPulseUITests
+        PRODUCT_NAME: WealthPulseUITests
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_ENTITLEMENTS: ""
+        DEVELOPMENT_TEAM: "9L6N2ZF26B"
+    dependencies:
+      - target: WealthPulse
+
 schemes:
   WealthPulse:
     build:
       targets:
         WealthPulse: all
+        WealthPulseUITests: test
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - WealthPulseUITests
     archive:
       config: Release
