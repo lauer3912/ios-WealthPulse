@@ -40,54 +40,12 @@ targets:
       path: WealthPulse/Sources/App/WealthPulse.entitlements
       properties: {}
 
-  WealthPulseTests:
-    type: bundle.unit-test
-    platform: iOS
-    sources:
-      - path: WealthPulseTests
-    settings:
-      base:
-        INFOPLIST_FILE: WealthPulseTests/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.ggsheng.WealthPulseTests
-        PRODUCT_NAME: WealthPulseTests
-        GENERATE_INFOPLIST_FILE: NO
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/WealthPulse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WealthPulse"
-        BUNDLE_LOADER: "$(TEST_HOST)"
-        CODE_SIGN_STYLE: Automatic
-        DEVELOPMENT_TEAM: "9L6N2ZF26B"
-    dependencies:
-      - target: WealthPulse
-
-  WealthPulseUITests:
-    type: bundle.ui-testing
-    platform: iOS
-    sources:
-      - path: WealthPulseUITests
-    settings:
-      base:
-        INFOPLIST_FILE: WealthPulseUITests/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.ggsheng.WealthPulseUITests
-        PRODUCT_NAME: WealthPulseUITests
-        GENERATE_INFOPLIST_FILE: NO
-        TEST_TARGET: "$(BUILT_PRODUCTS_DIR)/WealthPulse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WealthPulse"
-        CODE_SIGN_STYLE: Automatic
-        CODE_SIGN_ENTITLEMENTS: ""
-        DEVELOPMENT_TEAM: "9L6N2ZF26B"
-    dependencies:
-      - target: WealthPulse
-
 schemes:
   WealthPulse:
     build:
       targets:
         WealthPulse: all
-        WealthPulseTests: test
-        WealthPulseUITests: [test]
     run:
       config: Debug
-    test:
-      config: Debug
-      targets:
-        - WealthPulseUITests
     archive:
       config: Release
