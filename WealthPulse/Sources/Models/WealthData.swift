@@ -43,7 +43,7 @@ final class WealthData: Codable {
                 self.budgetRule = decoded.budgetRule
                 self.settings = decoded.settings
             } catch {
-                print("Failed to decode WealthData: \(error)")
+                // Silent fail - use default data
             }
         }
     }
@@ -53,7 +53,7 @@ final class WealthData: Codable {
             let data = try encoder.encode(self)
             defaults.set(data, forKey: "WealthPulseData")
         } catch {
-            print("Failed to encode WealthData: \(error)")
+            // Silent fail
         }
     }
 
