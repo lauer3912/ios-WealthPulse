@@ -1,5 +1,10 @@
 import StoreKit
 
+enum SubscriptionError: Error {
+    case verificationFailed
+    case purchaseFailed
+}
+
 @MainActor
 final class SubscriptionService: ObservableObject {
     static let shared = SubscriptionService()
@@ -52,7 +57,7 @@ final class SubscriptionService: ObservableObject {
 
             switch result {
             case .success(let verification):
-                let transaction = try checkVerified(verification)
+                let transaction = try verifyTransaction(verification)
                 await updateSubscriptionStatus()
                 await transaction.finish()
                 isLoading = false
@@ -77,19 +82,23 @@ final class SubscriptionService: ObservableObject {
         }
     }
 
+    private func verifyTransaction(_ result: VerificationResult<StoreKit.Transaction>) throws -> StoreKit.Transaction {
+        if case .verified(let transaction) = result {
+            return transaction
+        }
+        throw SubscriptionError.verificationFailed
+    }
+
     func updateSubscriptionStatus() async {
         var purchased: Set<String> = []
 
         for await result in StoreKit.Transaction.currentEntitlements {
-            do {
-                let transaction = try checkVerified(result)
+            if case .verified(let transaction) = result {
                 if transaction.productID == "wealthpulse_basic" ||
                    transaction.productID == "wealthpulse_premium_monthly" ||
                    transaction.productID == "wealthpulse_premium_yearly" {
                     purchased.insert(transaction.productID)
                 }
-            } catch {
-                print("Transaction verification failed: \(error)")
             }
         }
 
@@ -127,24 +136,12 @@ final class SubscriptionService: ObservableObject {
         WealthData.shared.save()
     }
 
-    func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
-        switch result {
-        case .unverified(let error):
-            throw error
-        case .verified(let safe):
-            return safe
-        }
-    }
-
     func listenForTransactions() -> Task<Void, Error> {
         return Task.detached {
             for await result in StoreKit.Transaction.updates {
-                do {
-                    let transaction = try await self.checkVerified(result)
+                if case .verified(let transaction) = result {
                     await self.updateSubscriptionStatus()
                     await transaction.finish()
-                } catch {
-                    print("Transaction update failed: \(error)")
                 }
             }
         }
