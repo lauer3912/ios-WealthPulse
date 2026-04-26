@@ -1,3 +1,7 @@
+# ══════════════════════════════════════════════════════════════
+# WealthPulse - Personal Finance Management App
+# ══════════════════════════════════════════════════════════════
+
 name: WealthPulse
 options:
   bundleIdPrefix: com.ggsheng
@@ -6,12 +10,16 @@ options:
   xcodeVersion: "15.0"
   generateEmptyDirectories: true
 
+# ══════════════════════════════════════════════════════════════
+# Global Build Settings
+# ══════════════════════════════════════════════════════════════
+
 settings:
   base:
     SWIFT_VERSION: "5.9"
     MARKETING_VERSION: "1.0.0"
     CURRENT_PROJECT_VERSION: "1"
-    DEVELOPMENT_TEAM: "9L6N2ZF26B"
+    DEVELOPMENT_TEAM: 9L6N2ZF26B
     CODE_SIGN_STYLE: Automatic
     ENABLE_USER_SCRIPT_SANDBOXING: NO
 
@@ -19,6 +27,10 @@ packages:
   SnapKit:
     url: https://github.com/SnapKit/SnapKit
     from: "5.6.0"
+
+# ══════════════════════════════════════════════════════════════
+# Target 1: Main App
+# ══════════════════════════════════════════════════════════════
 
 targets:
   WealthPulse:
@@ -34,11 +46,44 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_ENTITLEMENTS: WealthPulse/Sources/App/WealthPulse.entitlements
         GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGNING_ALLOWED: NO
+        DEVELOPMENT_TEAM: 9L6N2ZF26B
+      configs:
+        Debug:
+          CODE_SIGNING_ALLOWED: NO
+        Release:
+          CODE_SIGNING_ALLOWED: YES
     dependencies:
       - package: SnapKit
     entitlements:
       path: WealthPulse/Sources/App/WealthPulse.entitlements
       properties: {}
+
+# ══════════════════════════════════════════════════════════════
+# Target 2: Unit Tests
+# ══════════════════════════════════════════════════════════════
+
+  WealthPulseTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: WealthPulseTests
+    settings:
+      base:
+        INFOPLIST_FILE: WealthPulseTests/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.ggsheng.WealthPulseTests
+        PRODUCT_NAME: WealthPulseTests
+        GENERATE_INFOPLIST_FILE: NO
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/WealthPulse.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WealthPulse"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 9L6N2ZF26B
+    dependencies:
+      - target: WealthPulse
+
+# ══════════════════════════════════════════════════════════════
+# Target 3: UI Tests
+# ══════════════════════════════════════════════════════════════
 
   WealthPulseUITests:
     type: bundle.ui-testing
@@ -51,36 +96,29 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.ggsheng.WealthPulseUITests
         PRODUCT_NAME: WealthPulseUITests
         GENERATE_INFOPLIST_FILE: NO
-        CODE_SIGN_STYLE: Automatic
         CODE_SIGN_ENTITLEMENTS: ""
-        DEVELOPMENT_TEAM: "9L6N2ZF26B"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 9L6N2ZF26B
     dependencies:
       - target: WealthPulse
+
+# ══════════════════════════════════════════════════════════════
+# Schemes
+# ══════════════════════════════════════════════════════════════
 
 schemes:
   WealthPulse:
     build:
       targets:
         WealthPulse: all
-        WealthPulseUITests: test
+        WealthPulseTests: [test]
+        WealthPulseUITests: [test]
     run:
       config: Debug
     test:
       config: Debug
       targets:
-        - WealthPulseUITests
-    archive:
-      config: Release
-
-  WealthPulseUITests:
-    build:
-      targets:
-        WealthPulseUITests: test
-    run:
-      config: Debug
-    test:
-      config: Debug
-      targets:
+        - WealthPulseTests
         - WealthPulseUITests
     archive:
       config: Release

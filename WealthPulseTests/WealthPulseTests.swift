@@ -1,45 +1,45 @@
 import XCTest
+@testable import WealthPulse
 
 final class WealthPulseTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here
+    func testTransactionType() {
+        XCTAssertEqual(TransactionType.allCases.count, 2)
+        XCTAssertEqual(TransactionType.income.rawValue, "Income")
+        XCTAssertEqual(TransactionType.expense.rawValue, "Expense")
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here
+    func testTransactionCategory() {
+        XCTAssertGreaterThan(TransactionCategory.allCases.count, 10)
+        XCTAssertEqual(TransactionCategory.food.icon, "fork.knife")
+        XCTAssertEqual(TransactionCategory.salary.icon, "dollarsign.circle.fill")
     }
 
-    func testCurrencyFormatting() throws {
-        let amount = 1234.56
-        let formatted = amount.currencyFormatted
-        XCTAssertFalse(formatted.isEmpty)
+    func testAccountType() {
+        XCTAssertEqual(AccountType.allCases.count, 5)
+        XCTAssertEqual(AccountType.checking.rawValue, "Checking")
+        XCTAssertEqual(AccountType.savings.rawValue, "Savings")
     }
 
-    func testDateFormatting() throws {
-        let date = Date()
-        let formatted = date.formatted()
-        XCTAssertFalse(formatted.isEmpty)
+    func testBudgetRule() {
+        XCTAssertEqual(BudgetRule.allCases.count, 3)
+        XCTAssertEqual(BudgetRule.rule50_30_20.rawValue, "50/30/20 Rule")
     }
 
-    func testAccountTypes() throws {
-        let types = AccountType.allCases
-        XCTAssertTrue(types.count > 0)
-        XCTAssertEqual(types.first, .checking)
+    func testGoalType() {
+        XCTAssertEqual(GoalType.allCases.count, 4)
+        XCTAssertEqual(GoalType.emergencyFund.rawValue, "Emergency Fund")
+        XCTAssertEqual(GoalType.retirement.rawValue, "Retirement")
     }
 
-    func testTransactionCategories() throws {
-        let categories = TransactionCategory.allCases
-        XCTAssertTrue(categories.count > 0)
+    func testInvestmentType() {
+        XCTAssertEqual(InvestmentType.allCases.count, 5)
+        XCTAssertEqual(InvestmentType.stock.rawValue, "Stock")
+        XCTAssertEqual(InvestmentType.bond.rawValue, "Bond")
     }
 
-    func testGoalIcons() throws {
-        let icons = GoalIcon.allCases
-        XCTAssertTrue(icons.count > 0)
-    }
-
-    func testSubscriptionTiers() throws {
-        let tiers = SubscriptionTier.allCases
-        XCTAssertTrue(tiers.count == 2)
+    func testSubscriptionFrequency() {
+        XCTAssertEqual(SubscriptionFrequency.allCases.count, 4)
+        XCTAssertEqual(SubscriptionFrequency.monthly.rawValue, "Monthly")
     }
 }
