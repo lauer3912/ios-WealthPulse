@@ -1,83 +1,32 @@
+import Foundation
 import UserNotifications
 
-final class NotificationService {
+class NotificationService {
     static let shared = NotificationService()
-
     private let center = UNUserNotificationCenter.current()
-
-    private init() {}
+    private let dailyReminderID = "com.ggsheng.WealthPulse.dailyReminder"
 
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            DispatchQueue.main.async {
-                completion(granted)
-            }
-        }
+        center.requestAuthorization(options: [.alert, .sound]) { granted, _ in DispatchQueue.main.async { completion(granted) } }
     }
 
-    func checkAuthorizationStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
-        center.getNotificationSettings { settings in
-            DispatchQueue.main.async {
-                completion(settings.authorizationStatus)
-            }
-        }
-    }
-
-    func scheduleBudgetAlert(for budget: Budget, message: String) {
+    func scheduleDailyReminder(at hour: Int = 9) {
+        center.removePendingNotificationRequests(withIdentifiers: [dailyReminderID])
         let content = UNMutableNotificationContent()
-        content.title = "Budget Alert"
-        content.body = "\(budget.category.rawValue): \(message)"
+        content.title = "💰 WealthPulse"
+        content.body = "Track your expenses today! Every dollar counts toward your financial goals."
         content.sound = .default
-        content.categoryIdentifier = "BUDGET_ALERT"
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: "budget-\(budget.id.uuidString)", content: content, trigger: trigger)
-
-        center.add(request)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: hour, minute: 0), repeats: true)
+        let request = UNNotificationRequest(identifier: dailyReminderID, content: content, trigger: trigger)
+        center.add(request) { error in if let e = error { print("Notification error: \(e)") } }
     }
 
-    func scheduleGoalReminder(goal: Goal, message: String) {
-        let content = UNMutableNotificationContent()
-        content.title = "Goal Progress"
-        content.body = "\(goal.name): \(message)"
-        content.sound = .default
-        content.categoryIdentifier = "GOAL_REMINDER"
+    func cancelAll() { center.removePendingNotificationRequests(withIdentifiers: [dailyReminderID]) }
+    var isEnabled: Bool { get { UserDefaults.standard.bool(forKey: "WealthPulse.notificationsEnabled") } set { UserDefaults.standard.set(newValue, forKey: "WealthPulse.notificationsEnabled") } }
 
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: "goal-\(goal.id.uuidString)", content: content, trigger: trigger)
-
-        center.add(request)
+    func toggle(enabled: Bool, completion: @escaping (Bool) -> Void) {
+        if enabled { requestAuthorization { [weak self] granted in if granted { self?.isEnabled = true; self?.scheduleDailyReminder(); completion(true) } else { completion(false) } } }
+        else { isEnabled = false; cancelAll(); completion(true) }
     }
-
-    func scheduleSubscriptionReminder(expirationDate: Date) {
-        let content = UNMutableNotificationContent()
-        content.title = "Subscription Expiring"
-        content.body = "Your WealthPulse subscription expires on \(expirationDate.formatted())."
-        content.sound = .default
-        content.categoryIdentifier = "SUBSCRIPTION_REMINDER"
-
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        let request = UNNotificationRequest(identifier: "subscription-expiry", content: content, trigger: trigger)
-
-        center.add(request)
-    }
-
-    func cancelNotification(identifier: String) {
-        center.removePendingNotificationRequests(withIdentifiers: [identifier])
-    }
-
-    func cancelAllNotifications() {
-        center.removeAllPendingNotificationRequests()
-    }
-
-    func registerCategories() {
-        let viewAction = UNNotificationAction(identifier: "VIEW_ACTION", title: "View", options: .foreground)
-        let dismissAction = UNNotificationAction(identifier: "DISMISS_ACTION", title: "Dismiss", options: .destructive)
-
-        let budgetCategory = UNNotificationCategory(identifier: "BUDGET_ALERT", actions: [viewAction, dismissAction], intentIdentifiers: [])
-        let goalCategory = UNNotificationCategory(identifier: "GOAL_REMINDER", actions: [viewAction, dismissAction], intentIdentifiers: [])
-        let subscriptionCategory = UNNotificationCategory(identifier: "SUBSCRIPTION_REMINDER", actions: [viewAction, dismissAction], intentIdentifiers: [])
-
-        center.setNotificationCategories([budgetCategory, goalCategory, subscriptionCategory])
-    }
+    func restoreScheduledNotifications() { if isEnabled { scheduleDailyReminder() } }
 }
